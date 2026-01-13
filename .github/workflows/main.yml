@@ -5,10 +5,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Compile Exploit
         run: |
-          g++ CVE-2017-0213.cpp -o exploit_x64.exe -lole32 -loleaut32 -lshlwapi -luser32 -static
+          # محاولة الترجمة مع تجاهل التحذيرات وربط المكتبات الأساسية فقط
+          g++ CVE-2017-0213.cpp -o exploit_x64.exe -lole32 -loleaut32 -lshlwapi -luser32 -lruntimeobject -static
+          
       - name: Save Artifact
+        if: success() # لن يتم الرفع إلا إذا نجحت الترجمة
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Exploit

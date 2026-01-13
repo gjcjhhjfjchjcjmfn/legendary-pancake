@@ -6,13 +6,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # إعداد المترجم الذي اقترحته
+      - name: Setup C/C++ Compiler
+        id: setup-compiler
+        uses: rlalik/setup-cpp-compiler@master
+        with:
+          compiler: gcc-latest
+
+      # التأكد من التثبيت
+      - name: Verify GCC Installation
+        run: |
+          gcc --version
+          g++ --version
+
+      # عملية الكومبايل الفعلية
       - name: Compile Exploit
         run: |
-          # محاولة الترجمة مع تجاهل التحذيرات وربط المكتبات الأساسية فقط
-          g++ CVE-2017-0213.cpp -o exploit_x64.exe -lole32 -loleaut32 -lshlwapi -luser32 -lruntimeobject -static
+          g++ CVE-2017-0213.cpp -o exploit_x64.exe -lole32 -loleaut32 -lshlwapi -luser32 -static
           
       - name: Save Artifact
-        if: success() # لن يتم الرفع إلا إذا نجحت الترجمة
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Exploit

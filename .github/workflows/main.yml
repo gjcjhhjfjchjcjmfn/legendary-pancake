@@ -5,24 +5,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      
-      # إعداد المترجم الذي اقترحته
-      - name: Setup C/C++ Compiler
-        id: setup-compiler
-        uses: rlalik/setup-cpp-compiler@master
-        with:
-          compiler: gcc-latest
 
-      # التأكد من التثبيت
-      - name: Verify GCC Installation
-        run: |
-          gcc --version
-          g++ --version
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
 
-      # عملية الكومبايل الفعلية
-      - name: Compile Exploit
+      - name: Compile with MSVC
+        shell: cmd
         run: |
-          g++ CVE-2017-0213.cpp -o exploit_x64.exe -lole32 -loleaut32 -lshlwapi -luser32 -static
+          cl.exe CVE-2017-0213.cpp /FE:exploit_x64.exe /EHsc /DUNICODE /D_UNICODE ole32.lib oleaut32.lib user32.lib shlwapi.lib advapi32.lib shell32.lib
           
       - name: Save Artifact
         uses: actions/upload-artifact@v4
